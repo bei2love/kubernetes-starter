@@ -1,14 +1,33 @@
 # 一、预先准备环境
+## 0.环境清理
+
+清除其他方式安装的k8s组件
+
+yum remove kubelet kubeadm kubectl
+
 ## 1. 准备服务器
+
+查看系统信息
+
+```bash
+# cat /etc/redhat-release
+
+# uname
+
+# docker version
+```
+
+
+
 这里准备了三台ubuntu虚拟机，每台一核cpu和2G内存，配置好root账户，并安装好了docker，后续的所有操作都是使用root账户。虚拟机具体信息如下表：
 
 | 系统类型 | IP地址 | 节点角色 | CPU | Memory | Hostname |
 | :------: | :--------: | :-------: | :-----: | :---------: | :-----: |
-| ubuntu16.04 | 192.168.1.101 | worker |   1    | 2G | server01 |
-| ubuntu16.04 | 192.168.1.102 | master |   1    | 2G | server02 |
-| ubuntu16.04 | 192.168.1.103 | worker |   1    | 2G | server03 |
+| CentOS 8.0.1905 | 192.168.23.161 | master |   2    | 6G | jsb161.pve |
+| CentOS 8.0.1905 | 192.168.23.165 | worker |   2    | 8G | jsb165.pve |
+| CentOS 8.0.1905 | 192.168.23.166 | worker |   2    | 8G | jsb166.pve |
 
-> 使用centos的同学也可以参考此文档，需要注意替换系统命令即可
+> 使用Ubuntu的同学也可以参考此文档，需要注意替换系统命令即可
 
 ## 2. 安装docker（所有节点）
 一般情况使用下面的方法安装即可
@@ -61,7 +80,7 @@ ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
 $ systemctl daemon-reload
 $ service docker restart
 ```
-  
+
 
 遇到问题可以参考：[官方教程][1]
 
@@ -69,6 +88,7 @@ $ service docker restart
 #### 3.1 关闭、禁用防火墙(让所有机器之间都可以通过任意端口建立连接)
 ```bash
 $ ufw disable
+$ systemctl stop firewalld
 #查看状态
 $ ufw status
 ```
